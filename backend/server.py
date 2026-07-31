@@ -36,10 +36,15 @@ class StatusCheck(BaseModel):
 class StatusCheckCreate(BaseModel):
     client_name: str
 
-# Add your routes to the router instead of directly to app
+# Main root check
+@app.get("/")
+async def root_main():
+    return {"message": "Ancient Puzzle API is Running!"}
+
+# API root check
 @api_router.get("/")
-async def root():
-    return {"message": "Hello World"}
+async def root_api():
+    return {"message": "Hello World from API"}
 
 @api_router.post("/status", response_model=StatusCheck)
 async def create_status_check(input: StatusCheckCreate):
