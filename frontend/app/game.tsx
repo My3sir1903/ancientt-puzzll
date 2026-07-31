@@ -44,7 +44,7 @@ import {
 import { getGameSettings, GameSettings } from '@/src/utils/gameSettings';
 import { getRankByScore } from '@/src/utils/ranks';
 
-const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+const BACKEND_URL = 'https://ancient-puzzl.onrender.com';
 
 // Web-only styles to prevent page scroll while dragging
 const webNoTouchStyle =

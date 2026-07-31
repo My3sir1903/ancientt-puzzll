@@ -6,7 +6,7 @@ import { router } from 'expo-router';
 import { storage } from '@/src/utils/storage';
 import { getRankByScore } from '@/src/utils/ranks';
 
-const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+const BACKEND_URL = 'https://ancient-puzzl.onrender.com';
 
 interface LeaderboardEntry {
   username: string;
