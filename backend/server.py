@@ -84,7 +84,7 @@ async def startup_db_indexes():
     """Create MongoDB indexes on startup"""
     try:
         # Scores indexes for leaderboard
-        await db.scores.create_index("username")
+        await db.scores.create_index("username", unique=True)
         await db.scores.create_index([("score", -1)])  # Descending for leaderboard
         await db.scores.create_index([("timestamp", -1)])
         

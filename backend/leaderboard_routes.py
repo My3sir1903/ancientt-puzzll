@@ -26,29 +26,22 @@ async def get_db():
 
 @leaderboard_router.post("/score")
 async def submit_score(submission: ScoreSubmission):
-    """Submit a score to the leaderboard"""
     db = await get_db()
 
-    # Validate username
     username = submission.username.strip().lower()
 
-    if not username or len(username) < 2:
+    if len(username) < 2:
         raise HTTPException(status_code=400, detail="Invalid username")
 
     if submission.score < 0:
         raise HTTPException(status_code=400, detail="Invalid score")
 
-    # Check if this user already exists
-    existing = await db.scores.find_one(
-    {"username": username},
-    sort=[("score", -1)]
-)
+    existing = await db.scores.find_one({"username": username})
 
     if existing:
-        # Only update if the new score is higher
         if submission.score > existing["score"]:
             await db.scores.update_one(
-                {"_id": existing["_id"]},
+                {"username": username},
                 {
                     "$set": {
                         "score": submission.score,
@@ -57,7 +50,6 @@ async def submit_score(submission: ScoreSubmission):
                 }
             )
     else:
-        # First score of this user
         await db.scores.insert_one({
             "username": username,
             "score": submission.score,
