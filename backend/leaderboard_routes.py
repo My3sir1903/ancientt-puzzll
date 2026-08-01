@@ -40,19 +40,17 @@ async def submit_score(submission: ScoreSubmission):
 
     if existing:
         if submission.score > existing["score"]:
-            await db.scores.update_one(
-                {"username": username},
-                {
-                    "$set": {
-                        "score": submission.score,
-                        "timestamp": datetime.now(timezone.utc)
-                    }
-                }
-            )
+            await db.scores.insert_one({
+    "username": username,
+    "score": submission.score,
+    "games_played": 1,
+    "timestamp": datetime.now(timezone.utc)
+    })  
     else:
         await db.scores.insert_one({
             "username": username,
             "score": submission.score,
+            "games_played": 1,
             "timestamp": datetime.now(timezone.utc)
         })
 
@@ -83,44 +81,44 @@ async def get_top_scores(limit: int = 50):
 async def get_user_stats(username: str):
     """Get statistics for a specific user"""
     db = await get_db()
-    
-    # Get all scores for this user
-    user_scores = await db.scores.find(
-        {"username": username},
-        {"_id": 0, "score": 1}
-    ).to_list(1000)
-    
-    if not user_scores:
+
+    # Kullanıcıyı bul
+    user = await db.scores.find_one({"username": username})
+
+    if not user:
         return UserStats(
             username=username,
             high_score=0,
             games_played=0,
             rank=None
         )
-    
-    # Calculate stats
-    high_score = max(score["score"] for score in user_scores)
-    games_played = len(user_scores)
-    
-    # Calculate rank (how many unique users have a higher best score)
-    # Get all users' best scores
+
+    high_score = user["score"]
+    games_played = user.get("games_played", 1)
+
+    # Tüm kullanıcıları en yüksek skorlarına göre sırala
     pipeline = [
-        {"$group": {
-            "_id": "$username",
-            "best_score": {"$max": "$score"}
-        }},
-        {"$sort": {"best_score": -1}}
+        {
+            "$group": {
+                "_id": "$username",
+                "best_score": {"$max": "$score"}
+            }
+        },
+        {
+            "$sort": {
+                "best_score": -1
+            }
+        }
     ]
-    
+
     all_best_scores = await db.scores.aggregate(pipeline).to_list(10000)
-    
-    # Find rank
+
     rank = None
     for idx, entry in enumerate(all_best_scores):
         if entry["_id"] == username:
             rank = idx + 1
             break
-    
+
     return UserStats(
         username=username,
         high_score=high_score,
