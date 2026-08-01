@@ -6,7 +6,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { storage } from '@/src/utils/storage';
 import { RANKS, getRankByScore, getNextRank, getProgressToNextRank, getPointsToNextRank } from '@/src/utils/ranks';
 
-const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+const BACKEND_URL = 'https://ancient-puzzl.onrender.com';
 
 export default function RanksScreen() {
   const [username, setUsername] = useState<string>('');
@@ -27,22 +27,30 @@ export default function RanksScreen() {
   };
 
   const fetchUserStats = async (username: string) => {
-    try {
-      const response = await fetch(`${BACKEND_URL}/api/leaderboard/user/${encodeURIComponent(username)}`);
-      if (response.ok) {
-        const data = await response.json();
-        setHighScore(data.high_score || 0);
-      }
-    } catch (error) {
-      console.error('Error fetching user stats:', error);
+  try {
+    const response = await fetch(
+      `${BACKEND_URL}/api/leaderboard/user/${encodeURIComponent(username)}`
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+
+      console.log("API DATA:", data);
+
+      setHighScore(Number(data.high_score));
     }
-  };
+  } catch (error) {
+    console.error(error);
+  }
+};
 
   const currentRank = getRankByScore(highScore);
+  console.log("HIGH SCORE:", highScore);
+  console.log("CURRENT RANK:", currentRank);
   const nextRank = getNextRank(highScore);
   const progress = getProgressToNextRank(highScore);
   const pointsToNext = getPointsToNextRank(highScore);
-
+  console.log("RENDER HIGH SCORE:", highScore);
   return (
     <LinearGradient
       colors={['#1a1a2e', '#16213e', '#0f3460']}

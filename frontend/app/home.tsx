@@ -6,7 +6,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { storage } from '@/src/utils/storage';
 import { getRankByScore, getNextRank, getProgressToNextRank, getPointsToNextRank } from '@/src/utils/ranks';
 
-const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+const BACKEND_URL = 'https://ancient-puzzl.onrender.com';
 
 export default function HomeScreen() {
   const [username, setUsername] = useState<string>('');
@@ -37,6 +37,8 @@ export default function HomeScreen() {
       const response = await fetch(`${BACKEND_URL}/api/leaderboard/user/${encodeURIComponent(username)}`);
       if (response.ok) {
         const data = await response.json();
+        console.log("USERNAME:", username);
+        console.log("DATA:", data);
         setUserStats({
           highScore: data.high_score || 0,
           gamesPlayed: data.games_played || 0,

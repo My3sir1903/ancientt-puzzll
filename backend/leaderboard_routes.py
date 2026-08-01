@@ -28,25 +28,46 @@ async def get_db():
 async def submit_score(submission: ScoreSubmission):
     """Submit a score to the leaderboard"""
     db = await get_db()
-    
-    # Validate username and score
-    if not submission.username or len(submission.username.strip()) < 2:
+
+    # Validate username
+    username = submission.username.strip().lower()
+
+    if not username or len(username) < 2:
         raise HTTPException(status_code=400, detail="Invalid username")
-    
+
     if submission.score < 0:
         raise HTTPException(status_code=400, detail="Invalid score")
-    
-    # Create score entry
-    score_entry = {
-        "username": submission.username.strip(),
-        "score": submission.score,
-        "timestamp": datetime.now(timezone.utc)
+
+    # Check if this user already exists
+    existing = await db.scores.find_one(
+    {"username": username},
+    sort=[("score", -1)]
+)
+
+    if existing:
+        # Only update if the new score is higher
+        if submission.score > existing["score"]:
+            await db.scores.update_one(
+                {"_id": existing["_id"]},
+                {
+                    "$set": {
+                        "score": submission.score,
+                        "timestamp": datetime.now(timezone.utc)
+                    }
+                }
+            )
+    else:
+        # First score of this user
+        await db.scores.insert_one({
+            "username": username,
+            "score": submission.score,
+            "timestamp": datetime.now(timezone.utc)
+        })
+
+    return {
+        "message": "Score submitted successfully",
+        "score": submission.score
     }
-    
-    # Insert score
-    await db.scores.insert_one(score_entry)
-    
-    return {"message": "Score submitted successfully", "score": submission.score}
 
 @leaderboard_router.get("/top", response_model=List[LeaderboardEntry])
 async def get_top_scores(limit: int = 50):

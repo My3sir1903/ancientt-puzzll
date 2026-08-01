@@ -6,6 +6,7 @@ import { router } from 'expo-router';
 import { storage } from '@/src/utils/storage';
 import { getRankByScore } from '@/src/utils/ranks';
 
+// Sadece domain adresini bırakıyoruz (sonundaki /api kısmını sildik)
 const BACKEND_URL = 'https://ancient-puzzl.onrender.com';
 
 interface LeaderboardEntry {

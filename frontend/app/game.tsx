@@ -617,19 +617,20 @@ const comboAnim = useRef(new Animated.Value(0)).current;
       </SafeAreaView>
 
       {/* dragPos.getLayout() yerine transform kullanıyoruz */}
-<Animated.View
-  style={[
-    {
-      position: 'absolute',
-      opacity: 0.9,
-      pointerEvents: 'none',
-      transform: dragPos.getTranslateTransform(),
-    },
-  ]}
->
-  <RenderPieceBlocks piece={draggingPiece} cellSize={CELL_SIZE} />
-</Animated.View>>
-      )}
+{draggingPiece && (
+  <Animated.View
+    style={[
+      {
+        position: 'absolute',
+        opacity: 0.9,
+        pointerEvents: 'none',
+        transform: dragPos.getTranslateTransform(),
+      },
+    ]}
+  >
+    <RenderPieceBlocks piece={draggingPiece} cellSize={CELL_SIZE} />
+  </Animated.View>
+)}
 
       {/* Pause Modal */}
       <Modal visible={showPause} transparent animationType="fade">
@@ -1157,39 +1158,23 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   modalButtonSecondary: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(233, 69, 96, 0.4)',
-    width: '100%',
-    marginBottom: 8,
-    gap: 8,
-  },
-  modalButtonSecondaryText: {
-    color: '#e94560',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  modalButtonSecondary: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    width: '100%',
-    borderRadius: 12,
-    backgroundColor: 'rgba(255,255,255,0.05)',
-    borderWidth: 1,
-    borderColor: 'rgba(233, 69, 96, 0.3)',
-    marginTop: 8,
-    gap: 8,
-  },
-  modalButtonSecondaryText: {
-    color: '#e94560',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-});
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'center',
+  paddingVertical: 12,
+  width: '100%',
+  borderRadius: 12,
+  backgroundColor: 'rgba(255,255,255,0.05)',
+  borderWidth: 1,
+  borderColor: 'rgba(233, 69, 96, 0.3)',
+  marginTop: 8,
+  marginBottom: 8,
+  gap: 8,
+},
 
+modalButtonSecondaryText: {
+  color: '#e94560',
+  fontSize: 14,
+  fontWeight: '600',
+},
+});
