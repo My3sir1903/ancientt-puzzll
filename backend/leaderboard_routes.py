@@ -79,10 +79,10 @@ async def get_top_scores(limit: int = 50):
 
 @leaderboard_router.get("/user/{username}", response_model=UserStats)
 async def get_user_stats(username: str):
-    """Get statistics for a specific user"""
     db = await get_db()
 
-    # Kullanıcıyı bul
+    username = username.strip().lower()
+
     user = await db.scores.find_one({"username": username})
 
     if not user:

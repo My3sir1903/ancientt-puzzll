@@ -35,6 +35,8 @@ export default function HomeScreen() {
   const fetchUserStats = async (username: string) => {
     try {
       const response = await fetch(`${BACKEND_URL}/api/leaderboard/user/${encodeURIComponent(username)}`);
+
+      console.log("İSTEK URL:", `${BACKEND_URL}/api/leaderboard/user/${encodeURIComponent(username)}`);
       if (response.ok) {
         const data = await response.json();
         console.log("USERNAME:", username);
