@@ -39,13 +39,18 @@ async def submit_score(submission: ScoreSubmission):
     existing = await db.scores.find_one({"username": username})
 
     if existing:
-        if submission.score > existing["score"]:
-            await db.scores.insert_one({
-    "username": username,
-    "score": submission.score,
-    "games_played": 1,
-    "timestamp": datetime.now(timezone.utc)
-    })  
+        await db.scores.update_one(
+            {"username": username},
+            {
+                "$set": {
+                    "score": max(existing["score"], submission.score),
+                    "timestamp": datetime.now(timezone.utc)
+                },
+                "$inc": {
+                    "games_played": 1
+                }
+            }
+        )
     else:
         await db.scores.insert_one({
             "username": username,
@@ -58,7 +63,6 @@ async def submit_score(submission: ScoreSubmission):
         "message": "Score submitted successfully",
         "score": submission.score
     }
-
 @leaderboard_router.get("/top", response_model=List[LeaderboardEntry])
 async def get_top_scores(limit: int = 50):
     """Get top scores from the leaderboard"""

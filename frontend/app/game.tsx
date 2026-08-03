@@ -264,11 +264,17 @@ const comboAnim = useRef(new Animated.Value(0)).current;
 );
 
   const handleGameOver = async () => {
+  console.log("GAME OVER SCORE:", score);
+
     if (gameOverRef.current) return;
     setGameOver(true);
     triggerHaptic('error');
     if (!scoreSubmitted && username && score > 0) {
       try {
+        console.log("SENDING:", {
+        username,
+          score
+           });
         await fetch(`${BACKEND_URL}/api/leaderboard/score`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
