@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "6758c815-52f0-4bd3-bed2-10145b94e659"
+      }
+    },
+    "android": {
+      "package": "com.myd.yasir.ancientpuzzle"
+    }
+  }
+}
